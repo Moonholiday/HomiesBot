@@ -15,7 +15,7 @@ def get_quote():
 
 #advice request and return
 def get_advice():
-  res = requests.get('	https://api.adviceslip.com/advice')
+  res = requests.get('https://api.adviceslip.com/advice')
   json_data = json.loads(res.text)
   advice = json_data['slip']['advice']
   return advice
@@ -34,6 +34,8 @@ def get_joke():
 async def on_ready():
   print('Connected as {0.user}'.format(client))
 
+commands = ['quote', 'advice', 'joke']
+
 #client event to trigger bot
 @client.event
 async def on_message(message):
@@ -41,18 +43,23 @@ async def on_message(message):
   if message.author == client.user:
     return
 
+  if message.content.startswith('$help'):
+    await message.channel.send('prefix=$')
+    for i in enumerate(commands):
+      await message.channel.send(i)
+
   #if the message is $quote runs fn quote()
-  if message.content.startswith('$quote'):
+  if message.content.startswith('$'+commands[0]):
     quote = get_quote()
     await message.channel.send(quote)
 
   #if the message is $advice runs fn advice()
-  if message.content.startswith('$advice'):
+  if message.content.startswith('$'+commands[1]):
     advice = get_advice()
     await message.channel.send(advice)
   
   #if the message is $joke runs fn joke()
-  if message.content.startswith('$joke'):
+  if message.content.startswith('$'+commands[2]):
     joke = get_joke()
     await message.channel.send(joke)
 
